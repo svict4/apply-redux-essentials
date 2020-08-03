@@ -1,14 +1,10 @@
 import React from "react";
 import { useForm } from "react-hook-form";
-
 import { withRouter } from "react-router-dom";
-import { useStateMachine } from "little-state-machine";
-
-import updateAction from "../actions/updateAction";
-import TextFieldWithErrors from "../../components/TextFieldWithErrors";
-import BottomNavigation from "../components/BottomNavigation";
-
-import { Typography, Container, Grid } from "@material-ui/core";
+import { useSelector, useDispatch } from "react-redux";
+import { Typography, Container, TextField } from "@material-ui/core";
+import { Person } from "./agptSlice";
+import BottomNavigation from "../../components/BottomNavigation";
 import * as yup from "yup";
 
 const NamesSchema = yup.object().shape({
@@ -28,28 +24,22 @@ const NamesSchema = yup.object().shape({
       .required("Required")
       .matches(/^[A-Za-z\s-]+$/, "Letters, spaces and hypens only"),
     preferredName: yup.string().notRequired(),
-    otherName: yup.string().notRequired()
-  })
+    otherName: yup.string().notRequired(),
+  }),
 });
 
-const Names = props => {
-  const { state, action } = useStateMachine(updateAction, {
-    debugName: "names"
-  });
-  const [isSubmitting, setisSubmitting] = React.useState(false);
-
+const Names = (props) => {
+  const dispatch = useDispatch();
+  const person = useSelector((state) => state.login.person);
   const { register, handleSubmit, watch, errors } = useForm({
     validationSchema: NamesSchema,
-    defaultValues: { ...state.data }
+    defaultValues: { person },
   });
   const watchFirstName = watch("person.firstName");
 
-  const onSubmit = data => {
-    setisSubmitting(!isSubmitting);
-    setTimeout(() => {
-      setisSubmitting(isSubmitting => !isSubmitting);
-    }, 10000);
-    action({ postedFrom: props.location.pathname.substring(1), ...data });
+  const onSubmit = (data) => {
+    dispatch(Person(data));
+    // action({ postedFrom: props.location.pathname.substring(1), ...data });
   };
 
   return (
@@ -67,92 +57,82 @@ const Names = props => {
         registration
       </div>
       <form onSubmit={handleSubmit(onSubmit)}>
-        {/* <FormControl fullWidth margin="normal">
-          <InputLabel>Title</InputLabel>
-          <Controller
-            name="person.title"
-            defaultValue="Dr"
-            control={control}
-            as={
-              <Select disabled>
-                <MenuItem value="Dr">Dr</MenuItem>
-                <MenuItem value="Mrs">Mrs</MenuItem>
-                <MenuItem value="Ms">Ms</MenuItem>
-                <MenuItem value="Miss">Miss</MenuItem>
-                <MenuItem value="Mr">Mr</MenuItem>
-              </Select>
-            }
-          />
-        </FormControl> */}
-
-        <TextFieldWithErrors
+        <TextField
           name="person.title"
-          errors={errors}
+          label="Title"
+          value="Dr"
           inputRef={register}
+          variant="outlined"
           margin="normal"
+          required
           fullWidth
           disabled
-          value="Dr"
-          label="Title"
         />
 
-        <TextFieldWithErrors
+        <TextField
           name="person.firstName"
-          errors={errors}
-          inputRef={register}
-          margin="normal"
-          spellCheck={false}
-          autoComplete="given-name"
-          fullWidth
           label="First name"
+          inputRef={register}
+          variant="outlined"
+          margin="normal"
+          required
+          fullWidth
+          disabled
         />
 
-        <TextFieldWithErrors
-          errors={errors}
-          inputRef={register}
-          margin="normal"
-          spellCheck={false}
-          fullWidth
-          label="Middle name"
+        <TextField
           name="person.middleName"
-        />
-
-        <TextFieldWithErrors
-          errors={errors}
+          label="Middle name"
           inputRef={register}
-          margin="normal"
           spellCheck={false}
-          autoComplete="family-name"
-          fullWidth
-          label="Last name"
-          name="person.lastName"
-        />
-
-        <TextFieldWithErrors
-          errors={errors}
-          inputRef={register}
+          variant="outlined"
           margin="normal"
           fullWidth
-          id="person.preferredName"
+        />
+
+        <TextField
+          name="person.lastName"
+          label="Last name"
+          inputRef={register}
+          spellCheck={false}
+          variant="outlined"
+          margin="normal"
+          required
+          fullWidth
+          disabled
+        />
+
+        <TextField
+          inputRef={register}
+          error={typeof errors?.person?.password != "undefined"}
+          helperText={
+            errors?.person?.password?.message ||
+            "All other names e.g. maiden/married name"
+          }
           label="Preferred name"
           name="person.preferredName"
-          helperText={
-            watchFirstName && `If you don't usually go by '${watchFirstName}'`
-          }
-        />
-
-        <TextFieldWithErrors
-          errors={errors}
-          inputRef={register}
+          spellCheck={false}
+          variant="outlined"
           margin="normal"
           fullWidth
-          id="person.otherName"
-          label="Other names known by"
-          name="person.otherName"
-          helperText="All other names e.g. maiden/married name"
         />
 
-        <BottomNavigation disabled={isSubmitting} />
+        <TextField
+          inputRef={register}
+          error={typeof errors?.person?.otherName != "undefined"}
+          helperText={
+            errors?.person?.otherName?.message ||
+            "All other names e.g. maiden/married name"
+          }
+          label="Other names known by"
+          name="person.otherName"
+          spellCheck={false}
+          variant="outlined"
+          margin="normal"
+          fullWidth
+        />
+
+        <BottomNavigation />
       </form>
     </Container>
   );

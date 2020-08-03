@@ -38,7 +38,8 @@
     "redux-thunk": "^2.3.0",
     "seedrandom": "^3.0.5",
     "txtgen": "^2.2.4",
-    "typescript": "^3.9.7"
+    "typescript": "^3.9.7",
+    "yup": "^0.29.2"
   },
   "scripts": {
     "start": "react-scripts start",

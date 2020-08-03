@@ -1,5 +1,4 @@
 import React, { useState } from "react";
-import { useReactOidc } from "@axa-fr/react-oidc-redux";
 import { useSelector, useDispatch } from "react-redux";
 import { withRouter } from "react-router-dom";
 import Button from "@material-ui/core/Button";
@@ -20,6 +19,7 @@ const Login = (props) => {
   const dispatch = useDispatch();
   const loginStatus = useSelector((state) => state.login.status);
   const userExists = useSelector((state) => state.login.exists);
+  const accountCreated = useSelector((state) => state.login.accountCreated);
   const classes = useStyles();
   const [email, setEmail] = useState("");
   const { register, handleSubmit, errors, watch } = useForm();
@@ -27,7 +27,7 @@ const Login = (props) => {
 
   React.useEffect(() => {
     const timeout = setTimeout(() => {
-      if (userExists) {
+      if (userExists || accountCreated) {
         props.history.replace("/names");
       }
     }, 1500);
@@ -35,10 +35,9 @@ const Login = (props) => {
     return () => {
       clearTimeout(timeout);
     };
-  }, [userExists, props.history]);
+  }, [userExists, props.history, accountCreated]);
 
   const onSubmit = (data) => {
-    debugger;
     if (userExists === null) {
       dispatch(GetPersonByEmail(email));
     } else if (userExists === false) {

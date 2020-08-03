@@ -6,14 +6,10 @@ import {
 import { client } from "../../api/client";
 
 const agptAdapter = createEntityAdapter();
-const initialState = agptAdapter.getInitialState({
-  status: "",
-  exists: false,
-  error: null,
-});
+const initialState = agptAdapter.getInitialState({});
 
-export const GetPersonByEmail = createAsyncThunk(
-  "AGPT/sendData",
+export const Person = createAsyncThunk(
+  "agpt/Person",
   async (email, thunkAPI) => {
     console.log(thunkAPI);
     const response = await client.get(
@@ -28,18 +24,15 @@ const agptSlice = createSlice({
   initialState,
   reducers: {},
   extraReducers: {
-    [GetPersonByEmail.pending]: (state, action) => {
+    [Person.pending]: (state, action) => {
       state.status = "loading";
     },
-    [GetPersonByEmail.fulfilled]: (state, action) => {
+    [Person.fulfilled]: (state, action) => {
       state.status = "succeeded";
       state.exists = true;
     },
-    [GetPersonByEmail.rejected]: (state, action) => {
+    [Person.rejected]: (state, action) => {
       state.status = "failed";
-      if (action.error.message === "404") {
-        state.exists = false;
-      }
       state.error = action.error.message;
     },
   },

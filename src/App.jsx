@@ -7,6 +7,7 @@ import {
 } from "react-router-dom";
 import { useReactOidc, withOidcSecure } from "@axa-fr/react-oidc-redux";
 import Login from "./pages/login/login";
+import Names from "./pages/agpt/Names";
 
 function App() {
   return (
@@ -14,7 +15,7 @@ function App() {
       <div className="App">
         <Switch>
           <Route exact path="/login" component={Login} />
-          <Route exact path="/names" component={Login} />
+          <Route exact path="/names" component={Names} />
           <Redirect to="/" />
         </Switch>
       </div>

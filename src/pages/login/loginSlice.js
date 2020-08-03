@@ -10,6 +10,14 @@ const initialState = loginAdapter.getInitialState({
   status: "",
   exists: false,
   error: null,
+  accountCreated: null,
+  person: {
+    firstName: "",
+    lastName: "",
+    middleName: "",
+    title: "",
+    preferredName: "",
+  },
 });
 
 export const GetPersonByEmail = createAsyncThunk(
@@ -27,7 +35,7 @@ export const CreateAccount = createAsyncThunk(
   "WebUser/CreateAccount",
   async (data, thunkAPI) => {
     console.log(thunkAPI);
-    let post = { email: data.email, ...data.person };
+    let post = { email: data.email, userName: data.email, ...data.person };
     const response = await client.post(`/api/v1/WebUser`, post);
     return JSON.stringify(response);
   }
@@ -53,15 +61,16 @@ const loginSlice = createSlice({
       state.error = action.error.message;
     },
     [CreateAccount.pending]: (state, action) => {
-      debugger;
       state.status = "loading";
     },
     [CreateAccount.fulfilled]: (state, action) => {
       debugger;
       state.status = "succeeded";
+      state.person = { ...action.meta.arg.person };
+      state.person.email = action.meta.arg.email;
+      state.accountCreated = true;
     },
     [CreateAccount.rejected]: (state, action) => {
-      debugger;
       state.status = "failed";
       state.error = action.error.message;
     },

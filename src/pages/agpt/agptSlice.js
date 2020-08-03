@@ -5,15 +5,15 @@ import {
 } from "@reduxjs/toolkit";
 import { client } from "../../api/client";
 
-const loginAdapter = createEntityAdapter();
-const initialState = loginAdapter.getInitialState({
+const agptAdapter = createEntityAdapter();
+const initialState = agptAdapter.getInitialState({
   status: "",
   exists: false,
   error: null,
 });
 
 export const GetPersonByEmail = createAsyncThunk(
-  "WebUser/GetPersonByEmail",
+  "AGPT/sendData",
   async (email, thunkAPI) => {
     console.log(thunkAPI);
     const response = await client.get(
@@ -23,18 +23,8 @@ export const GetPersonByEmail = createAsyncThunk(
   }
 );
 
-export const CreateAccount = createAsyncThunk(
-  "WebUser/CreateAccount",
-  async (data, thunkAPI) => {
-    console.log(thunkAPI);
-    let post = { email: data.email, ...data.person };
-    const response = await client.post(`/api/v1/WebUser`, post);
-    return JSON.stringify(response);
-  }
-);
-
-const loginSlice = createSlice({
-  name: "login",
+const agptSlice = createSlice({
+  name: "agpt",
   initialState,
   reducers: {},
   extraReducers: {
@@ -52,20 +42,7 @@ const loginSlice = createSlice({
       }
       state.error = action.error.message;
     },
-    [CreateAccount.pending]: (state, action) => {
-      debugger;
-      state.status = "loading";
-    },
-    [CreateAccount.fulfilled]: (state, action) => {
-      debugger;
-      state.status = "succeeded";
-    },
-    [CreateAccount.rejected]: (state, action) => {
-      debugger;
-      state.status = "failed";
-      state.error = action.error.message;
-    },
   },
 });
 
-export default loginSlice.reducer;
+export default agptSlice.reducer;

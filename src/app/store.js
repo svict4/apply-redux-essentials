@@ -1,4 +1,5 @@
 import { configureStore } from "@reduxjs/toolkit";
+import { reducer as oidc } from "@axa-fr/react-oidc-redux";
 
 import postsReducer from "../features/posts/postsSlice";
 import usersReducer from "../features/users/usersSlice";
@@ -11,5 +12,6 @@ export default configureStore({
     users: usersReducer,
     notifications: notificationsReducer,
     login: loginReducer,
+    odic: oidc,
   },
 });

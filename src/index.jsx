@@ -32,7 +32,7 @@ ReactDOM.render(
           <Oidc
             store={store}
             configuration={configuration.config}
-            isEnabled={configuration.isEnabled}
+            isEnabled={configuration.isEnabled == "true"}
             UserStore={InMemoryWebStorage}
           >
             <App />

@@ -35,6 +35,6 @@ export default makeStyles((theme) => ({
   },
   formWrapper: {
     marginTop: "3rem",
-    textAlign: "center",
+    width: "425px",
   },
 }));

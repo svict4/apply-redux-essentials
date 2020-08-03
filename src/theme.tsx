@@ -23,6 +23,10 @@ const theme = createMuiTheme({
       main: red.A400,
     },
   },
+  typography: {
+    fontFamily: ["archiaregular", "Roboto", "Arial"].join(","),
+    fontSize: 14,
+  },
 });
 
 export default theme;

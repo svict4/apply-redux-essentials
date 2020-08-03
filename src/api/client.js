@@ -3,9 +3,11 @@
 
 import * as Sentry from "@sentry/browser";
 
+const BASE_URL = "https://testapply.acrrm.org.au";
+
 export async function client(endpoint, { body, ...customConfig } = {}) {
   const headers = { "Content-Type": "application/json" };
-  debugger;
+
   const config = {
     method: body ? "POST" : "GET",
     ...customConfig,
@@ -19,17 +21,22 @@ export async function client(endpoint, { body, ...customConfig } = {}) {
     config.body = JSON.stringify(body);
   }
 
-  let data;
-  try {
-    const response = await window.fetch(endpoint, config);
-    data = await response.json();
-    if (response.ok) {
-      return data;
+  const response = await window.fetch(`${BASE_URL}${endpoint}`, config);
+  // TODO: accept array of expected non success codes
+  if (response.ok) {
+    const contentType = response.headers.get("content-type");
+    if (contentType && contentType.indexOf("application/json") !== -1) {
+      return response.json();
+    } else {
+      let data = await response.text();
+      if (!data) {
+        return response.status;
+      }
     }
-    throw new Error(response.statusText);
-  } catch (err) {
-    Sentry.captureException(err);
-    return Promise.reject(err.message ? err.message : data);
+  } else {
+    Sentry.captureException(response);
+    // TODO: might be able to send other data
+    return Promise.reject(response.status);
   }
 }
 

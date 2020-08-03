@@ -1,19 +1,19 @@
-import React, { useEffect } from 'react'
-import { useSelector, useDispatch } from 'react-redux'
-import { Link } from 'react-router-dom'
+import React, { useEffect } from "react";
+import { useSelector, useDispatch } from "react-redux";
+import { Link } from "react-router-dom";
 
-import { PostAuthor } from './PostAuthor'
-import { TimeAgo } from './TimeAgo'
-import { ReactionButtons } from './ReactionButtons'
+import { PostAuthor } from "./PostAuthor";
+import { TimeAgo } from "./TimeAgo";
+import { ReactionButtons } from "./ReactionButtons";
 import {
   selectAllPosts,
   fetchPosts,
   selectPostIds,
   selectPostById,
-} from './postsSlice'
+} from "./postsSlice";
 
 let PostExcerpt = ({ postId }) => {
-  const post = useSelector((state) => selectPostById(state, postId))
+  const post = useSelector((state) => selectPostById(state, postId));
 
   return (
     <article className="post-excerpt" key={post.id}>
@@ -29,32 +29,32 @@ let PostExcerpt = ({ postId }) => {
         View Post
       </Link>
     </article>
-  )
-}
+  );
+};
 
 export const PostsList = () => {
-  const dispatch = useDispatch()
-  const orderedPostIds = useSelector(selectPostIds)
+  const dispatch = useDispatch();
+  const orderedPostIds = useSelector(selectPostIds);
 
-  const postStatus = useSelector((state) => state.posts.status)
-  const error = useSelector((state) => state.posts.error)
+  const postStatus = useSelector((state) => state.posts.status);
+  const error = useSelector((state) => state.posts.error);
 
   useEffect(() => {
-    if (postStatus === 'idle') {
-      dispatch(fetchPosts())
+    if (postStatus === "idle") {
+      dispatch(fetchPosts());
     }
-  }, [postStatus, dispatch])
+  }, [postStatus, dispatch]);
 
-  let content
+  let content;
 
-  if (postStatus === 'loading') {
-    content = <div className="loader">Loading...</div>
-  } else if (postStatus === 'succeeded') {
+  if (postStatus === "loading") {
+    content = <div className="loader">Loading...</div>;
+  } else if (postStatus === "succeeded") {
     content = orderedPostIds.map((postId) => (
       <PostExcerpt key={postId} postId={postId} />
-    ))
-  } else if (postStatus === 'failed') {
-    content = <div>{error}</div>
+    ));
+  } else if (postStatus === "failed") {
+    content = <div>{error}</div>;
   }
 
   return (
@@ -62,5 +62,5 @@ export const PostsList = () => {
       <h2>Posts</h2>
       {content}
     </section>
-  )
-}
+  );
+};
